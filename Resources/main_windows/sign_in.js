@@ -51,6 +51,26 @@ loginReq.onload = function()
 	CurrentParticipant.setId(response[0].participant.id);
 	CurrentParticipant.setPassword(passwordTextField.value);
 	CurrentParticipant.setName(response[0].participant.first_name + " " + response[0].participant.last_name);
+	
+	/* TRAVEL LOG RATE */
+	var travelLogRateSet = false;
+	if (response[0].participant.devices.length > 0) {
+	  for (var i=0,j=response[0].participant.devices.length;i<j;i++) {
+	    if (response[0].participant.devices[i].identification == Ti.Platform.id) {
+	      CurrentParticipant.setTravelLogRate(response[0].participant.devices[i].travel_log_rate);
+      	CurrentParticipant.setTravelLogAdaptRate(response[0].participant.devices[i].travel_log_adapt_rate);
+      	travelLogRateSet = true;
+      	Ti.API.info('setting travel log rate to: ' + response[0].participant.devices[i].travel_log_rate + ' based on devices');
+	    }
+	  }
+	}
+	if (travelLogRateSet == false) {
+	  CurrentParticipant.setTravelLogRate(response[0].participant.default_travel_log_rate);
+  	CurrentParticipant.setTravelLogAdaptRate(response[0].participant.default_travel_log_adapt_rate);
+  	travelLogRateSet = true;
+    Ti.API.info('setting travel log rate to: ' + response[0].participant.default_travel_log_rate + ' based on default');
+	}
+	
 	win.close();
 	Windows.main();
 };
